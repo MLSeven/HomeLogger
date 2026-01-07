@@ -57,17 +57,7 @@ app.post('/api', function (req, res) {
    var filename = path.join(__dirname,req.query.file+'.json');
    debug(`returning json file ${filename}`);
    const statusCode = 200;
-   fs.readFile(filename, 'utf8', (err,json) => {
-       if (err) {
-           debug('Endpoint not found on server');
-           res.status(404).json({error: req.params.file + ' is not a valid endpoint'});
-       }
-       else {
-           const data = JSON.parse(json);
-           res.status(200).json(data);
-           debug(json);
-       };
-   });
+
 })
 
 var server = app.listen(process.env.PORT, function () {
