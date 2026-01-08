@@ -61,13 +61,12 @@ app.get('/api',function (req, res) {
 
 // This responds a POST request for the homepage
 app.post('/api', function (req, res) {
-   debug("POST /api checking body");
+   debug("POST /api : body ...");
    debug(req.body);
-   debug(req.query);
 
    //const jsonData = JSON.parse(req.body);
    repo.newLogEntry(req.body);
-   res.status(200).json(req.body);
+   res.status(201);
 
 })
 
