@@ -5,12 +5,21 @@ const path = require('path');
 const debug = require('debug')('app');
 //FileSystem package
 const fs = require('fs');
+
 // bring in environment variables
 require('dotenv').config();
 
-debug(`Starting App.js in ${process.env.NODE_ENV} mode`);
-debug(`App Path root is ${__dirname}`)
+//SQLite3
+//const sqlite3 = require('sqlite3');
 
+// Import Repo
+const repo = require(path.join(__dirname,'repo.js'));
+
+debug(`Starting App.js in ${process.env.NODE_ENV} mode`);
+debug(`App Path root is ${__dirname}`);
+
+//Create and seed datbase if required
+repo.createLog();
 
 // Start here with app
 const app = express();
@@ -18,6 +27,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 
 // This responds with "Hello" on the homepage
 app.get('/', function (req, res) {
@@ -42,8 +52,8 @@ app.get('/api',function (req, res) {
             res.status(404).json({error: req.params.file + ' is not a valid endpoint'});
         }
         else {
-            const data = JSON.parse(json);
-            res.status(200).json(data);
+            const jsonData = JSON.parse(json);
+            res.status(200).json(jsonData);
             debug(json);
         };
     });
@@ -54,9 +64,10 @@ app.post('/api', function (req, res) {
    debug("POST /api checking body");
    debug(req.body);
    debug(req.query);
-   var filename = path.join(__dirname,req.query.file+'.json');
-   debug(`returning json file ${filename}`);
-   const statusCode = 200;
+
+   //const jsonData = JSON.parse(req.body);
+   repo.newLogEntry(req.body);
+   res.status(200).json(req.body);
 
 })
 
