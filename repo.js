@@ -42,7 +42,22 @@ async function newLogEntry(logEntry) {
 
     } catch (error) {
         console.log(error);
-        debug('Error seeding homelog table');
+        debug('Error Inserting into  homelog table');
+    }
+}
+
+async function getLogEntries() {
+    const sql = `Select * FROM homelog`;
+    try {
+        debug('Querying table homelog');
+        let params = [];
+        //console.log(params)
+        const log = await dataBase.fetchAll(sql, params);
+        return log
+
+    } catch (error) {
+        console.log(error);
+        debug('Error querying homelog table');
     }
 }
 
@@ -50,5 +65,6 @@ debug('Exporting Module functions');
 
 module.exports = {
     createLog,
-    newLogEntry
+    newLogEntry,
+    getLogEntries
 }

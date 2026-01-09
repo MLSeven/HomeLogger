@@ -75,7 +75,9 @@ async function execute(sql, params) {
 async function fetchAll(sql, params) {
     const db = new sqlite3.Database(dbName);
     try {
-        await sqliteFetchAll(db,sql,params);
+        const rows = await sqliteFetchAll(db,sql,params);
+        debug(rows);
+        return rows;
     } catch (error) {
         debug('Error executing SQL: %s',error.message)
     } finally {
@@ -86,7 +88,7 @@ async function fetchAll(sql, params) {
 async function fetchFirst(sql, params) {
     const db = new sqlite3.Database(dbName);
     try {
-        await sqliteFetchFirst(db,sql,params);
+        const row = await sqliteFetchFirst(db,sql,params);
     } catch (error) {
         debug('Error executing SQL: %s',error.message)
     } finally {

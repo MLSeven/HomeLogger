@@ -28,47 +28,36 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.route('/')
+    // This responds with "Hello" on the homepage
+    .get((req,res) => {
+        debug('GET /');
+        debug('Query parameters: ');
+        debug(req.query);
+        res.send('Hello GET').status(200);
+    })
 
-// This responds with "Hello" on the homepage
-app.get('/', function (req, res) {
-   debug('GET /');
-   debug('Query parameters: ');
-   debug(req.query);
-   res.send('Hello GET');
-})
+// /api route
+app.route('/api')
+    //get
+    .get(async (req, res) => {
+        //debug('GET /api : Query String  %o',req.query);
+        //debug('GET /api : Parameters %o',req.params);
+        //console.log(req.params);
+        debug('Get Request - Quering database');
+        const dbRows =  await repo.getLogEntries();
+        debug('sending response');
+        debug(dbRows);
+        res.send(dbRows).status(200);
+    })
+    .post(async (req, res) => {
+        debug('POST /api : body ...');
+        debug(req.body);
 
-// 
-app.get('/api',function (req, res) {
-    debug('GET /api : Query String  %o',req.query);
-    debug('GET /api : Parameters %o',req.params);
-    //console.log(req.params);
-    var filename = path.join(__dirname,req.query.file+'.json');
-    debug('returning json file %s',filename);
-    const statusCode = 200;
-    fs.readFile(filename, 'utf8', (err,json) => {
-
-        if (err) {
-            debug('Endpoint not found on server');
-            res.status(404).json({error: req.params.file + ' is not a valid endpoint'});
-        }
-        else {
-            const jsonData = JSON.parse(json);
-            res.status(200).json(jsonData);
-            debug(json);
-        };
-    });
-})
-
-// This responds a POST request for the homepage
-app.post('/api', function (req, res) {
-   debug("POST /api : body ...");
-   debug(req.body);
-
-   //const jsonData = JSON.parse(req.body);
-   repo.newLogEntry(req.body);
-   res.status(201);
-
-})
+        //const jsonData = JSON.parse(req.body);
+        await repo.newLogEntry(req.body);
+        res.status(201);
+    })
 
 var server = app.listen(process.env.PORT, function () {
    var host = server.address().address
